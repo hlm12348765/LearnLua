@@ -198,7 +198,7 @@ var从exp1变化到exp2，每次变化以exp3为步长递增var，并执行一�
     statements
  until (condition)</code></pre>
 
- ![repeat...until](https://img.w3cschool.cn/attachments/image/lua_repeat_until_loop.jpg)
+ ![repeat...until](http://www.runoob.com/wp-content/uploads/2015/05/lua_repeat_until_loop.jpg)
 
 ####  循环嵌套
 * for循环嵌套
