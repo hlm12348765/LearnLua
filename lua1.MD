@@ -235,7 +235,7 @@ i 的值为：	10</code></pre>
 |-------|----|
 |break|退出当前循环或语句，开始执行紧接着的语句|
 
-![break](https://img.w3cschool.cn/attachments/image/cpp_break_statement.jpg)
+![break](http://www.runoob.com/wp-content/uploads/2015/05/cpp_break_statement.jpg)
 
 ### 3. 无限循环
 <pre><code>while (true)
