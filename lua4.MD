@@ -135,7 +135,7 @@ print(mytable)
 |方法|描述|
 |----|---|
 |coroutine.create()|创建coroutine，返回coroutine，参数是一个函数，当和resume配合使用的时候就唤醒函数调用|
-|coroutine.resume()|重启coroutine，和create配合使用|
+|coroutine.resume()|重启coroutine，和create配合使用，只要调用就会返回一个boolean值|
 |coroutine.yield()|挂起coroutine，将coroutine设置为挂起状态|
 |coroutine.status()|查看coroutine的状态(dead/suspend/running)|
 |coroutine.wrap()|创建coroutine，返回一个函数，一旦你调用这个函数，就进入coroutine|
@@ -185,4 +185,119 @@ print(coroutine.status(co2))  -- suspended
 print(coroutine.runnning())
 
 print('-----------')
+</code></pre>
+
+以上实例执行输出结果为：
+
+<pre><code>1
+dead
+----------
+1
+----------
+1
+2
+3
+running
+thread: 0x7fb801c05868    false
+suspended
+thread: 0x7fb801c04c88    true
+----------
+</code></pre>
+
+> coroutine.running就可以看出来,coroutine在底层实现就是一个线程。
+
+>当create一个coroutine的时候就是在新线程中注册了一个事件。
+
+>当使用resume触发事件的时候，create的coroutine函数就被执行了，当遇到yield的时候就代表挂起当前线程，等候再次resume触发事件。
+
+**协程的运行可能被两种方式终止： 正常途径是主函数返回 （显式返回或运行完最后一条指令）； 非正常途径是发生了一个未被捕获的错误。 对于正常结束， coroutine.resume 将返回 true， 并接上协程主函数的返回值。 当错误发生时， coroutine.resume 将返回 false 与错误消息。**
+
+
+***
+
+# 十五. 文件I/O
+
+Lua I/O 库用于读取和处理文件。分为简单模式（和C一样）、完全模式。
+* 简单模式（simple model）拥有一个当前输入文件和一个当前输出文件，并且提供针对这些文件相关的操作。   
+
+* 完全模式（complete model） 使用外部的文件句柄来实现。它以一种面对对象的形式，将所有的文件操作定义为文件句柄的方法
+
+打开文件操作语句如下：
+
+<pre><code>file = io.open (filename [, mode])
+</code></pre>
+
+mode的值有：
+
+|模式|描述|
+|----|---|
+|r|以只读方式打开文件，该文件必须存在|
+|w|打开只写文件，若文件存在则文件长度清零，若文件不存在则创建|
+|a|以附加的方式打开只写文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾，即文件原先的内容会被保留。（EOF符保留）|
+|r+|以可读写方式打开文件，该文件必须存在|
+|w+|打开可读写文件，若文件存在则文件长度清零，若文件不存在则创建|
+|a+|与a类似，但该文件可读写|
+|b|二进制模式，如果文件是二进制文件，可以加上b|
+|+|加号表示对文件既可以读又可以写|
+
+## 1. 简单模式
+
+
+***
+
+# 十六. 错误处理
+
+* 语法错误
+* 运行错误
+
+## 1. 错误处理
+
+### 1.1 assert函数
+
+<pre><code>local function add(a, b)
+    assert(type(a) == "number", "a 不是一个数字")
+    assert(type(b) == "number", "b 不是一个数字")
+    return a+b
+end
+add(10)
+</code></pre>
+
+执行以上程序会出现如下错误：
+
+<pre><code>lua: test.lua:3: b 不是一个数字
+stack traceback:
+    [C]: in function 'assert'
+    test.lua:3: in local 'add'
+    test.lua:6: in main chunk
+    [C]: in ?
+</code></pre>
+
+实例中assert首先检查第一个参数，若没问题，assert不做任何事情；否则，assert以第二个参数作为错误信息抛出。
+
+### 1.2 error函数
+`error (message [, level])`
+
+>功能：终止正在执行的函数，并返回message的内容作为错误信息(error函数永远都不会返回)
+
+>通常情况下，error会附加一些错误位置的信息到message头部。
+
+>Level参数指示获得错误的位置:
+
+>* Level=1[默认]：为调用error位置(文件+行号)   
+
+>* Level=2：指出调用error的函数的函数   
+
+>* Level=0:不添加错误位置信息   
+
+## 2. pcall和xpcall、debug
+
+>Lua中处理错误，可以使用函数pcall（protected call）来包装需要执行的代码。   
+
+>pcall接收一个函数和要传递个后者的参数，并执行，执行结果：有错误、无错误；返回值true或者或false, errorinfo。
+
+<pre><code>if pcall(function_name, ….) then
+-- 没有错误
+else
+-- 一些错误
+end
 </code></pre>
